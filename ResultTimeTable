@@ -6,8 +6,8 @@ AlexNet(dataset:MNIST):
   AlexNet_Branchy(CPU-only):
     memory consuming: 45.402M
     exit1 accuracy(if all results exit at exit1): 0.96
-    exit2 accuracy(if all results exit at exit2): 0.97.24
-    exit3 accuracy(if all results exit at exit3): 0.97.79
+    exit2 accuracy(if all results exit at exit2): 0.9724
+    exit3 accuracy(if all results exit at exit3): 0.9779
     branchy net(exit depending on breakpoint's entropy)
       exit1: number:8066
              accuracy:0.9958
