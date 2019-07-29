@@ -1,0 +1,34 @@
+AlexNet(dataset:MNIST):
+  NakeAlexNet(CPU-only):
+    memory(structure) consuming: 15.98M
+    memory(parameters) consuming: 15.117M
+    testing  time: 710s
+    testing  accuracy: 0.9618
+  AlexNet_Branchy(CPU-only):
+    memory(structure) consuming: 45.402M
+    memory(parameters) consuming: 43.887M
+    exit1 accuracy(if all results exit at exit1): 0.96
+    exit2 accuracy(if all results exit at exit2): 0.97.24
+    exit3 accuracy(if all results exit at exit3): 0.97.79
+    branchy net(exit depending on breakpoint's entropy)
+      exit1: number:8066
+             accuracy:0.9958
+      exit2: number:985
+             accuracy:0.9786
+      exit3: number:949
+             accuracy:0.8377
+    testing  time: 200s
+    testing  accuracy:0.9791
+  AlexNet_SqueezeNet(CPU-only):
+    memory(structure) consuming: 2.867M
+    memory(parameters) consuming: 1.777M
+    testing  time: 273s
+    testing  accuracy: 0.9613
+  AlexNet_DeepCompression(CPU-only):
+    memory(structure) consuming: 
+    memory(parameters) consuming:
+    training time:
+    testing  time:
+  AlexNet_CompressionAndBranchy(CPU-only):
+    training time:
+    testing  time:
