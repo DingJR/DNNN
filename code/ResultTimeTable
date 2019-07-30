@@ -27,7 +27,7 @@ AlexNet(dataset:MNIST):
     testing  accuracy: 0.9613
   AlexNet_CompressionAndBranchy(CPU-only):
     T=0.30,0.20
-    memory consuming:3.047M
+    memory consuming:3.375M
     exit1 accuracy(if all results exit at exit1): 0.9942
     exit2 accuracy(if all results exit at exit2): 0.9717
     exit3 accuracy(if all results exit at exit3): 0.8129

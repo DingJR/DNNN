@@ -61,6 +61,7 @@ def test(model, test_loader, isBranch):
         print("Exit3 Number, Accuracy :{:d} , {:f}".format(exit3_num, accuracy))
     print("Finish Testing......")
 
+@profile
 def begin():
     net = AlexNet_Branchy_Squeeze()
     train_loader, test_loader = readMNIST()
