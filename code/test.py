@@ -1,5 +1,5 @@
 from CNN import CNN
-from DNN import LeNet, AlexNet, AlexNet_Branchy, AlexNet_Squeeze
+from DNN import LeNet, AlexNet, AlexNet_Branchy, AlexNet_Squeeze, AlexNet_Branchy_Squeeze
 import torch
 from torch import nn
 from torch.autograd import Variable
@@ -13,7 +13,6 @@ from train import train
     test_loader: using DataLoader in package torch.utils.data to transform the
                  data
 '''
-@profile
 def test(model, test_loader, isBranch):
     print("Start Testing......")
     if isBranch:
@@ -49,8 +48,6 @@ def test(model, test_loader, isBranch):
         _,predict=torch.max(output,1)
         correct=(predict==label).sum()
         correctNum+= int(correct)
-        if i>1:
-            break
         if i%100 == 0:
             print(i,correct)
     accuracy =correctNum/float(sumNum)
@@ -64,9 +61,8 @@ def test(model, test_loader, isBranch):
         print("Exit3 Number, Accuracy :{:d} , {:f}".format(exit3_num, accuracy))
     print("Finish Testing......")
 
-@profile
 def begin():
-    net = AlexNet_Branchy()
+    net = AlexNet_Branchy_Squeeze()
     train_loader, test_loader = readMNIST()
     '''
         To change the network,
@@ -76,26 +72,30 @@ def begin():
             change test(isBranch=True/False)
     '''
     #Begin Train
-    parameterFile = "./BranchyAlexNet.pkl"
+    parameterFile = "./BranchySqueezeAlexNet.pkl"
+    a = None
 
     try:
         net.load_state_dict(torch.load(parameterFile))
     except:
         train_start = time.perf_counter()
-        train(model=net, train_loader=train_loader, isBranch=False)
+        train(model=net, train_loader=train_loader, isBranch=True)
         train_finish = time.perf_counter()
         torch.save(net.state_dict(), parameterFile)
         train_elapsed = train_finish - train_start
         print("Train Time:",train_elapsed,"s")
+
+    '''
     dic = net.state_dict()
     for name,params in net.named_parameters():
         print(name)
         print(dic[name].size())
         print(dic[name].numel())
+    '''
 
     #Begin Test
     test_start = time.perf_counter()
-    test(net, test_loader, isBranch=False)
+    test(net, test_loader, isBranch=True)
     test_finish = time.perf_counter()
 
     test_elapsed =  test_finish - test_start

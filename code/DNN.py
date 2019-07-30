@@ -323,3 +323,127 @@ class AlexNet_Squeeze(nn.Module):
         if x.dim() == 1:
             x = x.unsqueeze(0)
         return x
+
+class Branch1(nn.Module):
+    def __init__(self, input_channels, num_classes=10):
+        super(Branch1, self).__init__()
+        self.layer1 = Squeeze_Layer(96, 256, 32)
+        self.pool1  = nn.MaxPool2d(kernel_size=3, stride=2)
+        self.layer2 = Squeeze_Layer(256, 256, 64)
+        self.pool2  = nn.MaxPool2d(kernel_size=3, stride=2)
+        self.out=nn.Conv2d(in_channels=256, out_channels=10, kernel_size=1)
+    def forward(self ,x):
+        x = self.layer1(x)
+        x = self.pool1(x)
+        x = self.layer2(x)
+        x = self.pool2(x)
+        x = self.out(x)
+        x = nn.functional.avg_pool2d(input=x, kernel_size=5)
+        x = x.squeeze()
+        if x.dim() == 1:
+            x = x.unsqueeze(0)
+        return x
+
+class Branch2(nn.Module):
+    def __init__(self, input_channels, num_classes=10):
+        super(Branch2, self).__init__()
+        self.layer1 = Squeeze_Layer(384, 256, 32)
+        self.pool1  = nn.MaxPool2d(kernel_size=3, stride=2)
+        self.out=nn.Conv2d(in_channels=256, out_channels=10, kernel_size=1)
+    def forward(self ,x):
+        x = self.layer1(x)
+        x = self.pool1(x)
+        x = self.out(x)
+        x = nn.functional.avg_pool2d(input=x, kernel_size=5)
+        x = x.squeeze()
+        if x.dim() == 1:
+            x = x.unsqueeze(0)
+        return x
+
+class AlexNet_Branchy_Squeeze(nn.Module):
+    def __init__(self, num_classes = 10, input_channels=1):#imagenet数量
+        super(AlexNet_Branchy_Squeeze, self).__init__()
+        self.layer1 = nn.Sequential(
+            nn.Conv2d(in_channels=input_channels, out_channels=96, kernel_size=11, stride=4),
+            nn.MaxPool2d(kernel_size=3, stride=2),
+        )
+        self.exit1 = Branch1(input_channels=96, num_classes=num_classes)
+
+        self.layer2 = Squeeze_Layer(96, 256, 32)
+        self.pool1  = nn.MaxPool2d(kernel_size=3, stride=2)
+        self.layer3 = Squeeze_Layer(256, 384, 48)
+        self.exit2= Branch2(input_channels=384, num_classes=num_classes)
+
+        self.layer4 = Squeeze_Layer(384, 384, 48)
+        self.layer5 = Squeeze_Layer(384, 256, 64)
+        self.pool2  = nn.MaxPool2d(kernel_size=3, stride=2)
+        self.out    = nn.Sequential(
+            nn.Conv2d(in_channels=256, out_channels=10, kernel_size=1)
+        )
+    def forward(self, input_data, useType = 1):
+        #training
+        if not useType:
+            predictions = []
+            x_1    = self.layer1(input_data)
+            #exit1
+            prediction_branch1 = self.exit1(x_1)
+            x_2    = self.layer2(x_1)
+            x_2    = self.pool1(x_2)
+            x_3    = self.layer3(x_2)
+            #exit2
+            prediction_branch2 = self.exit2(x_3)
+            x_4    = self.layer4(x_3)
+            x_5    = self.layer5(x_4)
+            x_5    = self.pool2(x_5)
+            #exit3
+            x      = self.out(x_5)
+            x      = nn.functional.avg_pool2d(input=x, kernel_size=5)
+            x      = x.squeeze()
+            if x.dim() == 1:
+                x = x.unsqueeze(0)
+            predictions.append(prediction_branch1)
+            predictions.append(prediction_branch2)
+            predictions.append(x)
+            return predictions
+       # testing
+        else:
+            import math
+            T1 = 0.30
+            T2 = 0.20
+            #base line layer1
+            x_1    = self.layer1(input_data)
+            #branch 1
+            prediction_branch1 = self.exit1(x_1)
+            T = Entropy(prediction_branch1)
+            exitType = "1"
+            if T < T1:
+                return exitType, prediction_branch1
+    
+            #base line layer2,3
+            x_2    = self.layer2(x_1)
+            x_2    = self.pool1(x_2)
+            x_3    = self.layer3(x_2)
+    
+            #branch 2
+            prediction_branch2 = self.exit2(x_3)
+            T = Entropy(prediction_branch2)
+            exitType = "2"
+            if T < T2:
+                return exitType, prediction_branch2
+
+            #base line layer4,5
+            x_4    = self.layer4(x_3)
+            x_5    = self.layer5(x_4)
+            x_5    = self.pool2(x_5)
+    
+    
+            #base line exit3
+            x      = self.out(x_5)
+            x      = nn.functional.avg_pool2d(input=x, kernel_size=5)
+            exit3      = x.squeeze()
+            if exit3.dim() == 1:
+                exit3 = exit3.unsqueeze(0)
+
+            exitType = "3"
+            return exitType, exit3
+
