@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+    <html>
+    <head>
+        <meta charset="UTF-8">
+        <title>Motivation:</title>
+        <style>
+</style>
+        
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/Microsoft/vscode/extensions/markdown-language-features/media/markdown.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/Microsoft/vscode/extensions/markdown-language-features/media/highlight.css">
+<style>
+            body {
+                font-family: -apple-system, BlinkMacSystemFont, 'Segoe WPC', 'Segoe UI', system-ui, 'Ubuntu', 'Droid Sans', sans-serif;
+                font-size: 14px;
+                line-height: 1.6;
+            }
+        </style>
+        <style>
+.task-list-item { list-style-type: none; } .task-list-item-checkbox { margin-left: -20px; vertical-align: middle; }
+</style>
+        
+        
+        
+    </head>
+    <body class="vscode-light">
+        <h2 id="motivation">Motivation:</h2>
+<p>WE technique, represent word in vector form.</p>
+<p>What we expect in inputs of ML is numerical vectors instead of string sequences, so WE can provide us with more probabilties to
+transform sentences.</p>
+<h2 id="advantages">Advantages:</h2>
+<ol>
+<li>
+<p>Word Similarities: powerful, Euclidean Distance</p>
+<p><em>Why powerful</em>: Instead of just setting 1 or 0 in each position of vector, representing them with float number can capture more info about  a word.</p>
+</li>
+<li>
+<p>Scalibility: In WE, we choose a vector with a dimension and we can freely choose what the dimension is depending on the computing resourses we have and the sepcific task we deal with.</p>
+</li>
+</ol>
+<h2 id="implementations-mlneural-network-2-main-streams">Implementations: ML(Neural Network), 2 main streams</h2>
+<ol>
+<li>W2V: Based on context, we predict a word, then we compare them with the actual word appeared, and update the NN.
+<ul>
+<li>CBOW:
+<ol>
+<li>We have a sentence, 'I drink coffee everyday'.</li>
+<li>We use the model to predict a bunch of words' possibilities when we have 'I drink everyday',</li>
+<li>and we know that the actual word is 'coffee', than we can calculate the loss of the probabilties sequences to the actual word.</li>
+<li>Use the loss to BP to the whole NN.</li>
+</ol>
+</li>
+<li>SG:
+<ol>
+<li>The basic structure of model in SG is like what we have in CBOW.</li>
+<li>The only difference: We use the model predict context &quot;I drink everyday&quot; when we have a word 'coffee'.</li>
+</ol>
+</li>
+</ul>
+</li>
+<li>GloVe: Based on context, we get the statistical info of co-occurences of words.
+<ol>
+<li>We build a matrix X, elements X_{ij} tabulate the number of times word j occurs in the context of word i.</li>
+<li>Then we use each eles in X as train data to update our model.</li>
+</ol>
+</li>
+<li>Swivel: improved version of GloVe(2 improves)
+<ol>
+<li>Parrallel it</li>
+<li>Some words' co-occurence frequency is too Low: use more smooth loss func.</li>
+</ol>
+</li>
+</ol>
+
+    </body>
+    </html>
